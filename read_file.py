@@ -16,7 +16,7 @@ df = pd.DataFrame(rand_data)
 df.rename(columns={0: 'id', 1: 'first_name', 2: 'last_name'}, inplace=True)
 
 #connect to mysql, password deleted for privacy
-connection = mysql.connect(host = "localhost", user = "root", password = "")
+connection = mysql.connect(host = "localhost", user = "root", password = "3171998Aa")
 
 cursor = connection.cursor()
 #select DB, drop table if made, create table
@@ -31,6 +31,21 @@ for i, row in df.iterrows():
 
 connection.commit()
 
-#query to transpose columns into individual rows by id
-query = "SELECT id, first_name AS name FROM random_data UNION ALL SELECT id, last_name AS name FROM random_data ORDER BY id;"
-cursor.execute(query)
+#create final table to insert values in the requested format
+cursor.execute("DROP TABLE IF EXISTS final;")
+cursor.execute("CREATE TABLE final (id varchar(255), name varchar(255));")
+
+#call and insert data from random_data
+#into a dataframe - to be sent into the "final" table
+random_data_table = pd.read_sql_query("SELECT id, first_name AS name FROM random_data UNION ALL SELECT id, last_name AS name FROM random_data ORDER BY id;", connection)
+df2 = pd.DataFrame(random_data_table)
+df.rename(columns={0: 'id', 1: 'name'}, inplace=True)
+print(df2)
+
+#used to send data into "final" table
+for i, row in df2.iterrows():
+	query = "INSERT INTO final (id, name) VALUES (%s, %s);"
+	cursor.execute(query, tuple(row))
+
+#used to commit changes to db
+connection.commit()
