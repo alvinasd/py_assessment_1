@@ -49,3 +49,6 @@ for i, row in df2.iterrows():
 
 #used to commit changes to db
 connection.commit()
+
+#close connection to mysql
+connection.close()
