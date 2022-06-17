@@ -16,7 +16,7 @@ df = pd.DataFrame(rand_data)
 df.rename(columns={0: 'id', 1: 'first_name', 2: 'last_name'}, inplace=True)
 
 #connect to mysql, password deleted for privacy
-connection = mysql.connect(host = "localhost", user = "root", password = "3171998Aa")
+connection = mysql.connect(host = "localhost", user = "root", password = "")
 
 cursor = connection.cursor()
 #select DB, drop table if made, create table
